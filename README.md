@@ -2,16 +2,6 @@
 
 A nix flake that declares web applications.
 
-Supported browsers:
-
-- `"brave"` - Brave Browser
-- `"chromium-browser"` - Chromium
-- `"edge"` - Microsoft Edge
-- `"google-chrome"` - Google Chrome
-- `"helium"` - Helium Browser
-- `"thorium"` - Thorium Browser
-- `"vivaldi"` - Vivaldi
-
 ## Installation
 
 ### Using Flakes (Recommended)
@@ -63,15 +53,14 @@ Supported browsers:
 ### Module Options
 
 - **`enable`**: Enable the webapp manager module
-- **`browser`**: Default browser to use for all web apps (default: `null` - must be specified)
-  - Supported: `"brave"`, `"chromium-browser"`, `"edge"`, `"google-chrome"`, `"helium"`, `"thorium"`, `"vivaldi"`
+- **`browser`**: Default browser to use for all web apps
 - **`apps`**: Attribute set of web applications
 
 ### Per-App Options
 
 - **`url`** (required): The URL of the web application
 - **`icon`** (optional): Icon URL (will be downloaded) or local file path. If not specified, automatically fetches from `<url>/favicon.ico`
-- **`browser`** (optional): Browser to use for this specific app. Overrides `browser`. Must be one of: `"brave"`, `"chromium-browser"`, `"edge"`, `"google-chrome"`, `"helium"`, `"thorium"`, `"vivaldi"`
+- **`browser`** (optional): Browser to use for this specific app. Overrides `browser`.
 - **`exec`** (optional): Custom exec command. If specified, overrides the browser setting
 - **`comment`** (optional): Description shown in app launcher
 - **`mimeTypes`** (optional): List of MIME types for protocol handling

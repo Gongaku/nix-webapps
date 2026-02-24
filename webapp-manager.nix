@@ -10,17 +10,6 @@ with lib;
 let
   cfg = config.programs.nix-webapps;
 
-  # Supported browser types
-  browserType = types.enum [
-    "brave"
-    "chromium-browser"
-    "edge"
-    "google-chrome"
-    "helium"
-    "thorium"
-    "vivaldi"
-  ];
-
   # Type definition for a web app
   webappType = types.submodule {
     options = {
@@ -53,7 +42,7 @@ let
       };
 
       browser = mkOption {
-        type = types.nullOr browserType;
+        type = types.nullOr types.str;
         default = null;
         description = "Browser to use for this app. If not set, uses the global default.";
         example = "brave";
@@ -134,32 +123,11 @@ let
       baseDomain = builtins.head domainParts;
       appClass = "WebApp-${builtins.replaceStrings [ "." ] [ "-" ] baseDomain}";
 
-      # Browser categorization by engine
-      isChromiumBased = builtins.elem browser [
-        "brave"
-        "chromium-browser"
-        "edge"
-        "google-chrome"
-        "helium"
-        "thorium"
-        "vivaldi"
-      ];
-
       execCommand =
         if app.exec != null then
           app.exec
-        else if browser == null then
-          throw ''
-            Web app "${name}" requires a browser to be specified.
-            Either set:
-              - programs.nix-webapps.browser (global default), or
-              - programs.nix-webapps.apps.${name}.browser (per-app), or
-              - programs.nix-webapps.apps.${name}.exec (custom launcher)
-          ''
-        else if isChromiumBased then
-          ''${browser} --new-window --class="${appClass}" --app="${app.url}"''
         else
-          throw "Unsupported browser: ${browser}";
+          ''${browser} --new-window --class="${appClass}" --app="${app.url}"'';
       mimeTypeStr = optionalString (
         app.mimeTypes != [ ]
       ) "MimeType=${concatStringsSep ";" app.mimeTypes};\n";
@@ -201,12 +169,8 @@ in
     };
 
     browser = mkOption {
-      type = types.nullOr browserType;
-      default = null;
-      description = ''
-        Default browser to use for all web applications.
-        If not set, must specify browser per-app.
-      '';
+      type = types.str;
+      description = "Default browser to use for all web applications.";
       example = "brave";
     };
   };
