@@ -135,12 +135,13 @@ let
     in
     pkgs.writeText "${name}.desktop" ''
       [Desktop Entry]
-      Version=1.0
+      Version=1.5
       Name=${name}
       Comment=${if app.comment != "" then app.comment else name}
       Exec=${execCommand}
       Terminal=false
       Type=Application
+      StartupWMClass=${name}
       ${iconStr}StartupNotify=true
       ${mimeTypeStr}'';
 
