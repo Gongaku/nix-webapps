@@ -121,13 +121,15 @@ let
       domain = builtins.replaceStrings [ "https://" "http://" ] [ "" "" ] app.url;
       domainParts = builtins.split "/" domain;
       baseDomain = builtins.head domainParts;
-      appClass = "WebApp-${builtins.replaceStrings [ "." ] [ "-" ] baseDomain}";
+      appClass = toLower "webapp.${browser}.${
+        builtins.replaceStrings [ "." " " ] [ "-" "-" ] baseDomain
+      }";
 
       execCommand =
         if app.exec != null then
           app.exec
         else
-          ''${browser} --new-window --class="${appClass}" --app="${app.url}"'';
+          ''${browser} --new-window --class="${appClass}" --enable-features=UseOzonePlatform,WebRTCPipeWireCounter,WebUIDarkMode --ozone-platform-hint=auto --no-default-browser-check --window-name="${name}" --user-data-dir=${config.xdg.configHome}/${appClass} --app="${app.url}"'';
       mimeTypeStr = optionalString (
         app.mimeTypes != [ ]
       ) "MimeType=${concatStringsSep ";" app.mimeTypes};\n";
@@ -137,14 +139,14 @@ let
       [Desktop Entry]
       Version=1.5
       Name=${name}
+      GenericName="Web Browser"
       Comment=${if app.comment != "" then app.comment else name}
       Exec=${execCommand}
       Terminal=false
       Type=Application
-      StartupWMClass=${name}
+      StartupWMClass=${appClass}
       ${iconStr}StartupNotify=true
       ${mimeTypeStr}'';
-
 in
 {
   options.programs.nix-webapps = {
